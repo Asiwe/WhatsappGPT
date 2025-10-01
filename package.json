@@ -1,0 +1,30 @@
+{
+  "name": "whatsappgpt",
+  "displayName": "WhatsappGPT",
+  "description": "A native desktop wrapper for WhatsApp Web built with Tauri",
+  "version": "1.0.0",
+  "type": "module",
+  "author": "Asiwe",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Asiwe/WhatsappGPT.git"
+  },
+  "homepage": "https://github.com/Asiwe/WhatsappGPT#readme",
+  "keywords": [
+    "whatsapp",
+    "desktop",
+    "tauri",
+    "electron",
+    "messaging",
+    "web"
+  ],
+  "scripts": {
+    "dev": "tauri dev",
+    "build": "tauri build",
+    "tauri": "tauri"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2"
+  }
+}

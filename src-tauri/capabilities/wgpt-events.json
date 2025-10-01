@@ -1,0 +1,10 @@
+{
+  "$schema": "https://schema.tauri.app/capabilities/2",
+  "identifier": "wgpt-events",
+  "description": "Badge güncellemeleri için event emit/listen izni",
+  "windows": ["main"],
+  "permissions": [
+    "core:event:allow-emit",
+    "core:event:allow-listen"
+  ]
+}
