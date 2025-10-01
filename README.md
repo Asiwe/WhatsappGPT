@@ -17,23 +17,47 @@ The application provides a clean, native desktop experience for WhatsApp Web.
 
 ## Installation
 
-### Portable Version (Recommended)
+### Development Setup
 
-1. Download the latest release from the [Releases](https://github.com/Asiwe/WhatsappGPT/releases) page
-2. Extract the `WhatsappGPT-Portable` folder anywhere on your computer
-3. Double-click `Start-WhatsappGPT.vbs` to launch the application
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/Asiwe/WhatsappGPT.git
+   cd WhatsappGPT
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Run in development mode:
+   ```bash
+   npm run tauri dev
+   ```
+
+### Building
+
+To build the application:
+
+```bash
+npm run tauri build
+```
+
+The built application will be in `src-tauri/target/release/`.
 
 ### System Requirements
 
-- Windows 10 or later
+- [Rust](https://rustup.rs/) (latest stable version)
+- [Node.js](https://nodejs.org/) (v16 or later)
+- [Tauri CLI](https://tauri.app/v1/guides/getting-started/prerequisites)
 - Internet connection (for WhatsApp Web)
-- No additional dependencies required
 
 ## Usage
 
-1. **Launch the application** using `Start-WhatsappGPT.vbs` or `WhatsappGPT.bat`
-2. **Scan the QR code** with your phone's WhatsApp app
-3. **Start chatting** - enjoy the native desktop experience!
+1. **Run the development version** using `npm run tauri dev`
+2. **Or build and run** the compiled executable
+3. **Scan the QR code** with your phone's WhatsApp app
+4. **Start chatting** - enjoy the native desktop experience!
 
 ## Development
 

@@ -34,12 +34,11 @@ Thumbs.db
 dist/
 build/
 
-# Installer packages (keep portable version)
+# Installer packages and distributions
 WhatsappGPT-Installer-Package/
+WhatsappGPT-Portable/
 *.exe
 *.msi
 *.deb
 *.dmg
-
-# Keep portable version
-!WhatsappGPT-Portable/
+*.app
