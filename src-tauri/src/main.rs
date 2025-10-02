@@ -35,6 +35,136 @@ fn set_badge(_window: tauri::WebviewWindow, _count: u32) -> Result<(), String> {
   Ok(())
 }
 
+#[tauri::command]
+fn get_icon_path(icon_name: String) -> Result<String, String> {
+  use std::path::PathBuf;
+  
+  // Try different possible locations for the icon
+  let possible_paths = [
+    format!("icons/{}", icon_name),
+    format!("icons/badges/{}", icon_name),
+    format!("resources/icons/{}", icon_name),
+    format!("resources/icons/badges/{}", icon_name),
+  ];
+  
+  // Check current directory first
+  for path in &possible_paths {
+    let p = PathBuf::from(path);
+    if p.exists() {
+      return Ok(p.to_string_lossy().to_string());
+    }
+  }
+  
+  // Check relative to executable
+  if let Ok(exe) = std::env::current_exe() {
+    if let Some(dir) = exe.parent() {
+      for path in &possible_paths {
+        let p = dir.join(path);
+        if p.exists() {
+          return Ok(p.to_string_lossy().to_string());
+        }
+      }
+    }
+  }
+  
+  Err(format!("Icon not found: {}", icon_name))
+}
+
+#[tauri::command]
+fn list_available_icons() -> Result<Vec<String>, String> {
+  use std::fs;
+  use std::path::PathBuf;
+  
+  let mut icons = Vec::new();
+  
+  // Function to scan a directory for icons
+  let scan_directory = |dir_path: PathBuf| -> Vec<String> {
+    let mut found_icons = Vec::new();
+    if let Ok(entries) = fs::read_dir(&dir_path) {
+      for entry in entries.flatten() {
+        let path = entry.path();
+        if let Some(extension) = path.extension() {
+          if extension == "ico" || extension == "png" || extension == "icns" {
+            if let Some(name) = path.file_name() {
+              found_icons.push(name.to_string_lossy().to_string());
+            }
+          }
+        }
+      }
+    }
+    found_icons
+  };
+  
+  // Scan icons directory
+  let icons_dir = PathBuf::from("icons");
+  if icons_dir.exists() {
+    icons.extend(scan_directory(icons_dir.clone()));
+    
+    // Scan badges subdirectory
+    let badges_dir = icons_dir.join("badges");
+    if badges_dir.exists() {
+      let badge_icons: Vec<String> = scan_directory(badges_dir)
+        .into_iter()
+        .map(|name| format!("badges/{}", name))
+        .collect();
+      icons.extend(badge_icons);
+    }
+  }
+  
+  // Also check relative to executable
+  if let Ok(exe) = std::env::current_exe() {
+    if let Some(dir) = exe.parent() {
+      let exe_icons_dir = dir.join("icons");
+      if exe_icons_dir.exists() {
+        icons.extend(scan_directory(exe_icons_dir.clone()));
+        
+        let exe_badges_dir = exe_icons_dir.join("badges");
+        if exe_badges_dir.exists() {
+          let badge_icons: Vec<String> = scan_directory(exe_badges_dir)
+            .into_iter()
+            .map(|name| format!("badges/{}", name))
+            .collect();
+          icons.extend(badge_icons);
+        }
+      }
+      
+      // Also check resources directory
+      let resources_dir = dir.join("resources").join("icons");
+      if resources_dir.exists() {
+        icons.extend(scan_directory(resources_dir.clone()));
+        
+        let resources_badges_dir = resources_dir.join("badges");
+        if resources_badges_dir.exists() {
+          let badge_icons: Vec<String> = scan_directory(resources_badges_dir)
+            .into_iter()
+            .map(|name| format!("badges/{}", name))
+            .collect();
+          icons.extend(badge_icons);
+        }
+      }
+    }
+  }
+  
+  // Remove duplicates and sort
+  icons.sort();
+  icons.dedup();
+  
+  Ok(icons)
+}
+
+#[tauri::command]
+fn get_badge_icon_path(count: u32) -> Result<String, String> {
+  let badge_name = if count == 0 {
+    return Err("No badge for count 0".to_string());
+  } else if count > 9 {
+    "9+.ico".to_string()
+  } else {
+    format!("{}.ico", count)
+  };
+  
+  get_icon_path(format!("badges/{}", badge_name))
+}
+
 fn main() {
   tauri::Builder::default()
     .setup(|app| {
@@ -314,7 +444,12 @@ fn main() {
 
       Ok(())
     })
-    .invoke_handler(tauri::generate_handler![set_badge])
+    .invoke_handler(tauri::generate_handler![
+      set_badge,
+      get_icon_path,
+      list_available_icons,
+      get_badge_icon_path
+    ])
     .run(tauri::generate_context!())
     .expect("error while running WhatsappGPT");
 }
