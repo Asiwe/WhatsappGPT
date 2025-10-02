@@ -37,7 +37,11 @@ build/
 # Installer packages and distributions
 WhatsappGPT-Installer-Package/
 WhatsappGPT-Portable/
-*.exe
+# Allow the release setup executable
+!releases/
+!releases/*.exe
+# But ignore other executables
+src-tauri/target/release/whatsappgpt.exe
 *.msi
 *.deb
 *.dmg

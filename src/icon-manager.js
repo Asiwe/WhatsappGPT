@@ -221,3 +221,4 @@ const badgePath = await iconManager.getBadgeIconPath(3);
 // Preload commonly used icons
 await iconManager.preloadIcons(['icon.png', 'badges/5.ico']);
 */
+
